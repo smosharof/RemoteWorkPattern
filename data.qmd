@@ -73,5 +73,3 @@ These series support analysis of pandemic-related employment shocks and sector-s
 To assess travel behavior, I use the FHWA’s national Vehicle Miles Traveled (VMT) series, accessed through the fredr R package: TRFVOLUSM227NFWA — Total Vehicle Miles Traveled (Millions).
 
 Although hosted on FRED, this series originates from the FHWA’s Travel Monitoring Analysis System (TMAS). The dataset provides monthly national VMT back to the 1970s and enables visualization of pandemic-driven mobility declines and seasonality.
-
-## Missing value analysis

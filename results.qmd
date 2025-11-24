@@ -18,6 +18,7 @@ library(viridis)
 library(httr)
 library(jsonlite)
 library(readr)
+library (naniar)
 options(tigris_use_cache = TRUE)
 options(tidycensus.quiet = TRUE)
 ```
