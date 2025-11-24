@@ -4,7 +4,7 @@
     "href": "index.html",
     "title": "Remote Work Pattern",
     "section": "",
-    "text": "1 Introduction",
+    "text": "1 Introduction\nThe COVID-19 pandemic triggered one of the most rapid shifts in work arrangements in modern U.S. history, forcing millions of workers into remote or hybrid roles almost overnight. This shift reshaped not only employment patterns, but also commuting behavior, residential migration, and broader economic activity. As remote work stabilized into a permanent fixture for many industries, questions emerged about which regions and sectors experienced the greatest change, how travel and mobility responded, and whether the flexibility to work from home contributed to new patterns of moving within or across state lines.\nThis project explores these themes using federal data from the U.S. Census Bureau, the Bureau of Labor Statistics (BLS), and the Federal Highway Administration (FHWA). By combining measures of remote-work adoption, migration flows, industry-level employment trends, and vehicle-miles traveled, the analysis examines how different parts of the country were affected and how behavior changed before, during, and after the pandemic. The goal is to identify meaningful patterns—across states, across industries, and across time—that reveal how remote work has reshaped the geographic and economic landscape of the United States.",
     "crumbs": [
       "<span class='chapter-number'>1</span>  <span class='chapter-title'>Introduction</span>"
     ]
@@ -14,7 +14,7 @@
     "href": "data.html",
     "title": "2  Data",
     "section": "",
-    "text": "2.1 Description",
+    "text": "2.1 Description\nThis project draws on three primary U.S. federal data sources: the U.S. Census Bureau’s American Community Survey (ACS), the Bureau of Labor Statistics’ Current Employment Statistics (CES), and the Federal Highway Administration (FHWA) via the Federal Reserve Economic Data (FRED) API. All datasets are obtained directly from official sources, in compliance with project guidelines.\n1. U.S. Census Bureau — American Community Survey (ACS)\nThe ACS provides nationally representative, annually updated demographic and socioeconomic statistics. All ACS data used in this project come from the ACS 1-year estimates, accessed through the tidycensus R package, which retrieves data directly from the Census API.\nRemote Work Data\nTo measure remote-work prevalence, I use the ACS table:\nRemote-work percentages are computed for 2019 and 2022 to quantify changes during the COVID-19 period.\nMigration Data\nTo analyze mobility patterns, I use:\n2. U.S. Bureau of Labor Statistics — Current Employment Statistics (CES)\nEmployment trends by industry are obtained directly from the BLS CES “All Employees, Thousands” dataset.\nInstead of relying on third-party processed files, employment data are loaded from the official BLS data release: ce.data.0.AllCESSeries.txt — containing monthly employment counts for all CES series.\nSelected industry series include:\nThese series support analysis of pandemic-related employment shocks and sector-specific recovery trajectories.\n3. Federal Highway Administration (FHWA) via FRED\nTo assess travel behavior, I use the FHWA’s national Vehicle Miles Traveled (VMT) series, accessed through the fredr R package: TRFVOLUSM227NFWA — Total Vehicle Miles Traveled (Millions).\nAlthough hosted on FRED, this series originates from the FHWA’s Travel Monitoring Analysis System (TMAS). The dataset provides monthly national VMT back to the 1970s and enables visualization of pandemic-driven mobility declines and seasonality.",
     "crumbs": [
       "<span class='chapter-number'>2</span>  <span class='chapter-title'>Data</span>"
     ]
@@ -27,6 +27,66 @@
     "text": "2.2 Missing value analysis",
     "crumbs": [
       "<span class='chapter-number'>2</span>  <span class='chapter-title'>Data</span>"
+    ]
+  },
+  {
+    "objectID": "data.html#description",
+    "href": "data.html#description",
+    "title": "2  Data",
+    "section": "",
+    "text": "B08006 — Workers by Means of Transportation to Work\nB08006_001: Total workers\nB08006_017: Worked from home\n\n\n\n\n\nB07001 — Geographical Mobility in the Past Year\nB07001_004: Lived in the same house one year ago\nB07001_007: Moved from a different county\nB07001_010: Moved from a different state\n\n\n\n\n\n\nTotal Nonfarm (CES0000000001)\nConstruction (CES2000000001)\nManufacturing (CES3000000001)\nFinancial Services (CES5500000001)\nEducation & Health Services (CES6500000001)\nLeisure & Hospitality (CES7000000001)\nGovernment (CES9000000001)\nInformation Technology (CES5000000001)\nOther Services (CES8000000001)\nMining & Logging (CES1000000001)",
+    "crumbs": [
+      "<span class='chapter-number'>2</span>  <span class='chapter-title'>Data</span>"
+    ]
+  },
+  {
+    "objectID": "results.html",
+    "href": "results.html",
+    "title": "3  Results",
+    "section": "",
+    "text": "3.1 Remote Work by Region and Industry\nCode\n# Compare 2019 vs 2022 ACS data for \"Worked from home\"\nacs_remote_2019 &lt;- get_acs(\n  geography = \"state\",\n  variables = c(total = \"B08006_001\", remote = \"B08006_017\"),\n  year = 2019,\n  survey = \"acs1\"\n) %&gt;%\n  select(NAME, variable, estimate) %&gt;%\n  pivot_wider(names_from = variable, values_from = estimate) %&gt;%\n  mutate(remote_pct_2019 = 100 * remote / total)\n\nacs_remote_2022 &lt;- get_acs(\n  geography = \"state\",\n  variables = c(total = \"B08006_001\", remote = \"B08006_017\"),\n  year = 2022,\n  survey = \"acs1\"\n) %&gt;%\n  select(NAME, variable, estimate) %&gt;%\n  pivot_wider(names_from = variable, values_from = estimate) %&gt;%\n  mutate(remote_pct_2022 = 100 * remote / total)\n\nacs_remote_change &lt;- left_join(acs_remote_2019, acs_remote_2022, by = \"NAME\") %&gt;%\n  mutate(change = remote_pct_2022 - remote_pct_2019)",
+    "crumbs": [
+      "<span class='chapter-number'>3</span>  <span class='chapter-title'>Results</span>"
+    ]
+  },
+  {
+    "objectID": "conclusion.html",
+    "href": "conclusion.html",
+    "title": "4  Conclusion",
+    "section": "",
+    "text": "The data show that remote work increased substantially nationwide between 2019 and 2022, but the rise was uneven across states. Regions with strong tech and professional sectors experienced the largest gains, while much of the South and Midwest saw more modest growth. Employment patterns also shifted unevenly, with Leisure & Hospitality experiencing the deepest job losses during the pandemic and slower recovery, while sectors like Finance, IT, and Government rebounded more quickly. Mobility data reveal a sharp but temporary collapse in travel during early 2020, followed by a return to normal seasonal patterns. Migration analysis suggests only a weak connection between remote-work adoption and interstate movement. Overall, the pandemic reshaped work, mobility, and industry activity in distinct ways, with remote work emerging as an important—but not singular—driver of post-pandemic geographic and economic change.",
+    "crumbs": [
+      "<span class='chapter-number'>4</span>  <span class='chapter-title'>Conclusion</span>"
+    ]
+  },
+  {
+    "objectID": "results.html#remote-work-by-region-and-industry",
+    "href": "results.html#remote-work-by-region-and-industry",
+    "title": "3  Results",
+    "section": "",
+    "text": "3.1.1 Plot 1 - Change in % Working from Home\n\n\nCode\nggplot(acs_remote_change, aes(x = reorder(NAME, change), y = change)) +\n  geom_col(fill = \"steelblue\") +\n  coord_flip() +\n  labs(title = \"Change in Remote Work Share by State (2019–2022)\",\n       x = \"State\", y = \"Change in % Working from Home\") +\n  theme_minimal()\n\n\n\n\n\n\n\n\n\n\n\n3.1.2 Interpretation\nThe plot shows how much each state’s share of remote workers increased from 2019 to 2022. Washington, Maryland, Virginia, and D.C. saw the largest jumps, while many Southern and Midwestern states saw smaller increases. This highlights strong regional differences in remote-work adoption after COVID.\n\n\n3.1.3 Plot 2 - Remote Work Share by State\n\n\nCode\nlibrary(dplyr)\nlibrary(tidyr)\nlibrary(tibble)\nlibrary(choroplethr)\n\n# Step 1: Prepare ACS data in the required format\ndf_remote &lt;- acs_remote_2022 %&gt;%\n  transmute(\n    region = tolower(NAME),         # match choroplethr naming\n    value = remote_pct_2022         # renamed to \"value\"\n  )\n\n# Step 2: Draw the map using state_choropleth\nstate_choropleth(df_remote,\n                 title  = \"Remote Work Share by State (ACS 2022)\",\n                 legend = \"% Working from Home\")\n\n\n\n\n\n\n\n\n\n\n\n3.1.4 Interpretation\nThe map shows wide geographic variation in remote-work adoption in 2022. States on the West Coast, Mountain West, and Northeast have the highest work-from-home rates, while much of the South and Midwest show lower levels. One can infer that remote work remains concentrated in tech-professionals based in and urban regions.",
+    "crumbs": [
+      "<span class='chapter-number'>3</span>  <span class='chapter-title'>Results</span>"
+    ]
+  },
+  {
+    "objectID": "results.html#employment-by-industry-and-traffic-volume",
+    "href": "results.html#employment-by-industry-and-traffic-volume",
+    "title": "3  Results",
+    "section": "3.2 Employment by Industry and Traffic Volume",
+    "text": "3.2 Employment by Industry and Traffic Volume\n(Data Sources: Bureau of Labor Statistics & FHWA)\n\n3.2.1 Plot 1 - Employment Drop and Recovery During COVID-19\n\n\nCode\nlibrary(readr)\nlibrary(dplyr)\nlibrary(tibble)\nlibrary(ggplot2)\n\n# Step 1: Load CES data\nbls_raw &lt;- read_tsv(\n  \"/Users/a348092/Documents/Mshamim_Docs/Continuing Education/EDAV/Final Project/ce.data.0.AllCESSeries.txt\",\n  col_names = c(\"series_id\",\"year\",\"period\",\"value\",\"footnote\"),\n  skip = 1\n)\n\n# Step 2: Updated industries (P&B Services removed, Other Services added)\nindustries &lt;- tibble(\n  series_id = c(\n    \"CES1000000001\",  # Mining & Logging\n    \"CES2000000001\",  # Construction\n    \"CES3000000001\",  # Manufacturing\n    \"CES5000000001\",  # Information Technology\n    \"CES5500000001\",  # Financial Services\n    \"CES6500000001\",  # Education & Health Services\n    \"CES7000000001\",  # Leisure & Hospitality\n    \"CES9000000001\",  # Government\n    \"CES8000000001\"   # Other Services\n  ),\n  label = c(\n    \"Mining & Logging\",\n    \"Construction\",\n    \"Manufacturing\",\n    \"Information Technology\",\n    \"Financial Services\",\n    \"Education & Health Services\",\n    \"Leisure & Hospitality\",\n    \"Government\",\n    \"Other Services\"\n  )\n)\n\n# Step 3: Filter dataset to selected industries\ndf_bls &lt;- bls_raw %&gt;%\n  filter(series_id %in% industries$series_id,\n         period != \"M13\") %&gt;%\n  mutate(\n    month = as.integer(substr(period, 2, 3)),\n    date = as.Date(paste(year, month, \"1\"), \"%Y %m %d\"),\n    value = as.numeric(value)\n  ) %&gt;%\n  left_join(industries, by = \"series_id\")\n\n# Step 4: Zoom into 2018–2024 (COVID focus)\ndf_zoom &lt;- df_bls %&gt;%\n  filter(date &gt;= as.Date(\"2018-01-01\"))\n\n# Step 5: COVID shock plot with fixed y-axis\nggplot(df_zoom, aes(date, value)) +\n  geom_line(color = \"steelblue\", size = 0.9) +\n  geom_vline(xintercept = as.Date(\"2020-03-01\"),\n             linetype = \"dashed\", color = \"red\", linewidth = 0.6) +\n  facet_wrap(~ label, scales = \"fixed\", ncol = 3) +\n  labs(\n    title = \"Employment Drop and Recovery During COVID-19\",\n    x = \"Year\",\n    y = \"Employment (Thousands)\"\n  ) +\n  scale_x_date(date_breaks = \"1 year\", date_labels = \"%Y\") +\n  theme_minimal(base_size = 12) +\n  theme(\n    axis.text.x = element_text(angle = 45, hjust = 1, size = 9),\n    strip.text = element_text(size = 11, face = \"bold\")\n  )\n\n\n\n\n\n\n\n\n\n\n\n3.2.2 Interpretation\nThe plot shows how COVID-19 affected employment across major U.S. industries. Leisure & Hospitality experienced the steepest collapse, while Construction, Government, Financial Services, and IT saw milder declines. Most sectors recovered gradually after 2020, but the size and speed of recovery varied, revealing uneven pandemic impacts across the labor market.\n\n\n3.2.3 Plot 2 - Seasonal Heatmap of Monthly Vehicle Miles Traveled\n\n\nCode\nlibrary(tidyverse)\nlibrary(lubridate)\n\n# Load FRED key once (if not already done)\nlibrary(fredr)\nfredr_set_key(Sys.getenv(\"FRED_API_KEY\"))\n\n# Get FHWA Vehicle Miles Traveled data from FRED\nvmt &lt;- fredr(\n  series_id = \"TRFVOLUSM227NFWA\",  # FHWA total vehicle miles\n  observation_start = as.Date(\"2018-01-01\")\n)\n\n# Step 1: Prepare VMT data\nvmt_heat &lt;- vmt %&gt;%\n  mutate(\n    Year = year(date),\n    Month = month(date, label = TRUE, abbr = TRUE)\n  )\n\n# Step 2: Plot heatmap\nggplot(vmt_heat, aes(x = Month, y = factor(Year), fill = value)) +\n  geom_tile(color = \"white\") +\n  scale_fill_viridis_c(\n    option = \"plasma\",\n    name = \"Vehicle Miles\\n(Billions)\",\n    direction = -1\n  ) +\n  labs(\n    title = \"Seasonal Heatmap of Monthly Vehicle Miles Traveled\",\n    subtitle = \"FHWA Vehicle Miles Traveled (VMT) via FRED\",\n    x = \"Month\",\n    y = \"Year\"\n  ) +\n  theme_minimal(base_size = 12) +\n  theme(\n    axis.text.x = element_text(size = 10),\n    axis.text.y = element_text(size = 10),\n    plot.title = element_text(size = 16, face = \"bold\"),\n    plot.subtitle = element_text(size = 12)\n  )\n\n\n\n\n\n\n\n\n\n\n\n3.2.4 Interpretation\nThe heatmap shows strong seasonal patterns in U.S. vehicle travel, with higher volumes in summer and lower in winter. A dramatic collapse appears in April 2020 during COVID lockdowns, followed by gradual recovery. Recent years show a return to typical seasonal rhythms, though not always matching pre-pandemic peaks.",
+    "crumbs": [
+      "<span class='chapter-number'>3</span>  <span class='chapter-title'>Results</span>"
+    ]
+  },
+  {
+    "objectID": "results.html#remote-work-vs.-interstate-migration-2022-by-state",
+    "href": "results.html#remote-work-vs.-interstate-migration-2022-by-state",
+    "title": "3  Results",
+    "section": "3.3 Remote Work vs. Interstate Migration (2022, by State)",
+    "text": "3.3 Remote Work vs. Interstate Migration (2022, by State)\n\n\nCode\nlibrary(tidyverse)\nlibrary(tidycensus)\n\n# Silence ACS messages\noptions(tidycensus.quiet = TRUE)\n\n# -------------------------------\n# 1. Remote work by state (ACS 2022)\n# -------------------------------\nacs_remote_2022 &lt;- get_acs(\n  geography = \"state\",\n  variables = c(\n    total = \"B08006_001\",   # Total workers\n    remote = \"B08006_017\"   # Worked from home\n  ),\n  year = 2022,\n  survey = \"acs1\"\n) %&gt;%\n  select(NAME, variable, estimate) %&gt;%\n  pivot_wider(names_from = variable, values_from = estimate) %&gt;%\n  mutate(remote_pct_2022 = 100 * remote / total)\n\n# -------------------------------\n# 2. Interstate migration by state (ACS 2022)\n# -------------------------------\n# B07001_010 = Lived in different state 1 year ago\nacs_interstate_2022 &lt;- get_acs(\n  geography = \"state\",\n  variables = c(\n    total = \"B07001_001\",      # Total population\n    diff_state = \"B07001_010\"  # Moved from different state\n  ),\n  year = 2022,\n  survey = \"acs1\"\n) %&gt;%\n  select(NAME, variable, estimate) %&gt;%\n  pivot_wider(names_from = variable, values_from = estimate) %&gt;%\n  mutate(interstate_pct = 100 * diff_state / total)\n\n# -------------------------------\n# 3. Merge datasets\n# -------------------------------\nmigration_remote_interstate &lt;- left_join(\n  acs_remote_2022,\n  acs_interstate_2022,\n  by = \"NAME\"\n)\n\n# -------------------------------\n# 4. Scatter plot: Remote Work vs Interstate Migration\n# -------------------------------\nggplot(migration_remote_interstate,\n       aes(x = remote_pct_2022, y = interstate_pct)) +\n  geom_point(color = \"steelblue\", size = 3) +\n  geom_smooth(method = \"lm\", se = TRUE, color = \"black\") +\n  labs(\n    title = \"Remote Work vs. Interstate Migration (2022, by State)\",\n    x = \"% Working from Home\",\n    y = \"% Moved from Different State (Past Year)\"\n  ) +\n  theme_minimal()\n\n\n\n\n\n\n\n\n\n\n3.3.1 Interpretation\nThis plot shows a weak but positive relationship between remote work and interstate migration in 2022. States with higher percentages of people working from home tend to have slightly higher rates of people moving in from a different state, but the relationship is modest and scattered — meaning remote work is one factor among many, not a dominant driver of interstate moves.",
+    "crumbs": [
+      "<span class='chapter-number'>3</span>  <span class='chapter-title'>Results</span>"
     ]
   }
 ]

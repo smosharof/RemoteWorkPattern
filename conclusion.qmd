@@ -1,1 +1,4 @@
 # Conclusion
+
+
+The data show that remote work increased substantially nationwide between 2019 and 2022, but the rise was uneven across states. Regions with strong tech and professional sectors experienced the largest gains, while much of the South and Midwest saw more modest growth. Employment patterns also shifted unevenly, with Leisure & Hospitality experiencing the deepest job losses during the pandemic and slower recovery, while sectors like Finance, IT, and Government rebounded more quickly. Mobility data reveal a sharp but temporary collapse in travel during early 2020, followed by a return to normal seasonal patterns. Migration analysis suggests only a weak connection between remote-work adoption and interstate movement. Overall, the pandemic reshaped work, mobility, and industry activity in distinct ways, with remote work emerging as an important—but not singular—driver of post-pandemic geographic and economic change.
