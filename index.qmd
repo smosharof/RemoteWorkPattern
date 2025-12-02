@@ -8,7 +8,9 @@ We address four questions:
 
 1. How did remote-work adoption vary by region?
 2. Were there any noticeable patterns between COVID-19 related local restrictions and remote-work adoption?
-2. Did people drive more or less during COVID-19 and immediately after?
-3. Are there links between remote-work adoption and residential migration?
+3. Did people drive more or less during COVID-19 and immediately after?
+4. Are there links between remote-work adoption and residential migration?
+
+
 
 
