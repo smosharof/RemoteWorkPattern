@@ -139,14 +139,8 @@ ul.task-list li input[type="checkbox"] {
 </nav>
 <div id="quarto-sidebar-glass" class="quarto-sidebar-collapse-item" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item"></div>
 <!-- margin-sidebar -->
-    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
-        <nav id="TOC" role="doc-toc" class="toc-active">
-    <h2 id="toc-title">Table of contents</h2>
-   
-  <ul>
-  <li><a href="#description" id="toc-description" class="nav-link active" data-scroll-target="#description"><span class="header-section-number">2.1</span> Description</a></li>
-  </ul>
-<div class="toc-actions"><ul><li><a href="https://github.com/smosharof/RemoteWorkPattern.git/edit/main/data.qmd" class="toc-action"><i class="bi bi-github"></i>Edit this page</a></li><li><a href="https://github.com/smosharof/RemoteWorkPattern.git/issues/new" class="toc-action"><i class="bi empty"></i>Report an issue</a></li></ul></div></nav>
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar zindex-bottom">
+        
     </div>
 <!-- main -->
 <main class="content" id="quarto-document-content">
@@ -170,50 +164,17 @@ ul.task-list li input[type="checkbox"] {
 </header>
 
 
-<p>This project draws on three primary U.S. federal data sources: the U.S. Census Bureau’s American Community Survey (ACS), the Bureau of Labor Statistics’ Current Employment Statistics (CES), and the Federal Highway Administration (FHWA) via the Federal Reserve Economic Data (FRED) API. All datasets are obtained directly from official sources, in compliance with project guidelines.</p>
-<section id="description" class="level2" data-number="2.1">
-<h2 data-number="2.1" class="anchored" data-anchor-id="description"><span class="header-section-number">2.1</span> Description</h2>
+<p>This project draws on four primary U.S. and international data sources: the U.S. Census Bureau’s American Community Survey (ACS), the Bureau of Labor Statistics’ Current Employment Statistics (CES), the Federal Highway Administration (FHWA) via the FRED API, and the Oxford COVID-19 Government Response Tracker (OxCGRT). All datasets are retrieved directly from their official providers or APIs in compliance with project guidelines.</p>
 <p><strong>1. U.S. Census Bureau — American Community Survey (ACS)</strong></p>
-<p>The ACS provides nationally representative, annually updated demographic and socioeconomic statistics. All ACS data used in this project come from the ACS 1-year estimates, accessed through the tidycensus R package, which retrieves data directly from the Census API.</p>
-<p>Remote Work Data</p>
-<p>To measure remote-work prevalence, I use the ACS table:</p>
-<ul>
-<li><p>B08006 — Workers by Means of Transportation to Work</p></li>
-<li><p>B08006_001: Total workers</p></li>
-<li><p>B08006_017: Worked from home</p></li>
-</ul>
-<p>Remote-work percentages are computed for 2019 and 2022 to quantify changes during the COVID-19 period.</p>
-<p>Migration Data</p>
-<p>To analyze mobility patterns, I use:</p>
-<ul>
-<li><p>B07001 — Geographical Mobility in the Past Year</p></li>
-<li><p>B07001_004: Lived in the same house one year ago</p></li>
-<li><p>B07001_007: Moved from a different county</p></li>
-<li><p>B07001_010: Moved from a different state</p></li>
-</ul>
+<p>The ACS provides nationally representative, annually updated demographic and socioeconomic statistics. All ACS data used in this project come from the ACS 1-year estimates and were accessed through the tidycensus R package, which retrieves data via the Census API. To measure remote-work prevalence, I use ACS table B08006, which reports workers by means of transportation to work. The variables B08006_001 (total workers) and B08006_017 (worked from home) are used to compute remote-work percentages for 2019 and 2022, enabling analysis of pandemic-period changes. To evaluate residential mobility, I use ACS table B07001, which reports geographical mobility in the past year. Specifically, B07001_004 identifies individuals living in the same house one year ago, B07001_007 captures moves from a different county, and B07001_010 captures moves from a different state. These measures support assessment of migration patterns and their relationship to remote-work prevalence.</p>
 <p><strong>2. U.S. Bureau of Labor Statistics — Current Employment Statistics (CES)</strong></p>
-<p>Employment trends by industry are obtained directly from the BLS CES “All Employees, Thousands” dataset.</p>
-<p>Instead of relying on third-party processed files, employment data are loaded from the official BLS data release: ce.data.0.AllCESSeries.txt — containing monthly employment counts for all CES series.</p>
-<p>Selected industry series include:</p>
-<ul>
-<li><p>Total Nonfarm (CES0000000001)</p></li>
-<li><p>Construction (CES2000000001)</p></li>
-<li><p>Manufacturing (CES3000000001)</p></li>
-<li><p>Financial Services (CES5500000001)</p></li>
-<li><p>Education &amp; Health Services (CES6500000001)</p></li>
-<li><p>Leisure &amp; Hospitality (CES7000000001)</p></li>
-<li><p>Government (CES9000000001)</p></li>
-<li><p>Information Technology (CES5000000001)</p></li>
-<li><p>Other Services (CES8000000001)</p></li>
-<li><p>Mining &amp; Logging (CES1000000001)</p></li>
-</ul>
-<p>These series support analysis of pandemic-related employment shocks and sector-specific recovery trajectories.</p>
+<p>Employment trends by industry are taken from the BLS CES program, using the official monthly data file ce.data.0.AllCESSeries.txt. This dataset includes employment counts for all CES series and allows construction of sector-level time series. Industries examined in this project include Total Nonfarm, Construction, Manufacturing, Financial Services, Education and Health Services, Leisure and Hospitality, Government, Information Technology, Other Services, and Mining and Logging. These data provide context for understanding how employment shocks and recoveries during COVID-19 varied across sectors that differ in remote-work feasibility.</p>
 <p><strong>3. Federal Highway Administration (FHWA) via FRED</strong></p>
-<p>To assess travel behavior, I use the FHWA’s national Vehicle Miles Traveled (VMT) series, accessed through the fredr R package: TRFVOLUSM227NFWA — Total Vehicle Miles Traveled (Millions).</p>
-<p>Although hosted on FRED, this series originates from the FHWA’s Travel Monitoring Analysis System (TMAS). The dataset provides monthly national VMT back to the 1970s and enables visualization of pandemic-driven mobility declines and seasonality.</p>
+<p>To assess national travel patterns, the project uses the FHWA’s Vehicle Miles Traveled (VMT) series, accessed through the fredr R package. Although hosted by the Federal Reserve Economic Data (FRED) system, this series originates from the FHWA’s Travel Monitoring Analysis System. The dataset includes monthly VMT totals extending back several decades and enables visualization of both pandemic-related mobility declines and seasonal travel behavior.</p>
+<p><strong>4. Oxford COVID-19 Government Response Tracker (OxCGRT)</strong></p>
+<p>To incorporate state-level pandemic policy context, the project uses the Oxford COVID-19 Government Response Tracker. The OxCGRT dataset compiles daily indicators of government interventions, including stay-at-home orders, school and business closures, gathering restrictions, and other public-health policies. After downloading the U.S. state dataset from the OxCGRT GitHub repository, I compute the average 2020 Stringency Index for each state. This summary measure provides a standardized way to compare levels of policy strictness across states and to examine whether stricter COVID-19 regulations are associated with greater increases in remote-work adoption.</p>
 
 
-</section>
 
 </main> <!-- /main -->
 <script id="quarto-html-after-body" type="application/javascript">
@@ -635,7 +596,7 @@ ul.task-list li input[type="checkbox"] {
     </div>   
     <div class="nav-footer-center">
       &nbsp;
-    <div class="toc-actions d-sm-block d-md-none"><ul><li><a href="https://github.com/smosharof/RemoteWorkPattern.git/edit/main/data.qmd" class="toc-action"><i class="bi bi-github"></i>Edit this page</a></li><li><a href="https://github.com/smosharof/RemoteWorkPattern.git/issues/new" class="toc-action"><i class="bi empty"></i>Report an issue</a></li></ul></div></div>
+    <div class="toc-actions"><ul><li><a href="https://github.com/smosharof/RemoteWorkPattern.git/edit/main/data.qmd" class="toc-action"><i class="bi bi-github"></i>Edit this page</a></li><li><a href="https://github.com/smosharof/RemoteWorkPattern.git/issues/new" class="toc-action"><i class="bi empty"></i>Report an issue</a></li></ul></div></div>
     <div class="nav-footer-right">
 <p>This book was built with <a href="https://quarto.org/">Quarto</a>.</p>
 </div>

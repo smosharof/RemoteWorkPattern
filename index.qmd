@@ -2,12 +2,13 @@
 
 The COVID-19 pandemic triggered one of the most rapid shifts in work arrangements in modern U.S. history, forcing millions of workers into remote or hybrid roles almost overnight. This shift reshaped not only employment patterns, but also commuting behavior, residential migration, and broader economic activity. As remote work stabilized into a permanent fixture for many industries, questions emerged about which regions and sectors experienced the greatest change, how travel and mobility responded, and whether the flexibility to work from home contributed to new patterns of moving within or across state lines.
 
-This project explores these themes using federal data from the U.S. Census Bureau, the Bureau of Labor Statistics (BLS), and the Federal Highway Administration (FHWA). By combining measures of remote-work adoption, migration flows, industry-level employment trends, and vehicle-miles traveled, the analysis examines how different parts of the country were affected and how behavior changed before, during, and after the pandemic. The goal is to identify meaningful patterns—across states, across industries, and across time—that reveal how remote work has reshaped the geographic and economic landscape of the United States.
+This project explores these themes using federal data from the U.S. Census Bureau, the Bureau of Labor Statistics (BLS),  Federal Highway Administration (FHWA), and Oxford COVID-19 Government Response Tracker. By combining measures of remote-work adoption, migration flows, industry-level employment trends, and vehicle-miles traveled, the analysis examines how different parts of the country were affected and how behavior changed before, during, and after the pandemic. The goal is to identify meaningful patterns—across states, across industries, and across time—that reveal how remote work has reshaped the geographic and economic landscape of the United States.
 
-We address three questions:
+We address four questions:
 
-1. How did remote-work vary by region and industry after COVID-19?
-2. How has commuting time, public transport usage, or road traffic changed?
+1. How did remote-work adoption vary by region?
+2. Were there any noticeable patterns between COVID-19 related local restrictions and remote-work adoption?
+2. Did people drive more or less during COVID-19 and immediately after?
 3. Are there links between remote-work adoption and residential migration?
 
 

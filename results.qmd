@@ -1,11 +1,18 @@
 ---
+title: "Results"
+author: [Moe Shamim, UNI: ms7285]
 execute:
+  cache: true
   echo: true
-  warning: false
-  message: false
+format:
+  html:
+    fig-width: 7
+    fig-height: 5
+    embed-resources: true
+editor_options: 
+  chunk_output_type: inline
 ---
 
-# Results
 
 ```{r setup}
 # Load required libraries
@@ -18,14 +25,22 @@ library(viridis)
 library(httr)
 library(jsonlite)
 library(readr)
-library (naniar)
 options(tigris_use_cache = TRUE)
 options(tidycensus.quiet = TRUE)
 ```
 
 
+We address three questions:
 
-## **Remote Work  by Region and Industry**
+1. How did remote-work vary by region and industry after COVID-19?
+2. How has commuting time, public transport usage, or road traffic changed?
+3. Are there links between remote-work adoption and residential migration?
+
+---
+
+Remote Work  by Region and Industry
+
+(Data Source: U.S. Census Bureau, ACS 1-Year Estimates)
 
 ```{r remote-work-data}
 # Compare 2019 vs 2022 ACS data for "Worked from home"
@@ -54,7 +69,8 @@ acs_remote_change <- left_join(acs_remote_2019, acs_remote_2022, by = "NAME") %>
 
 ```
 
-### **Plot 1 - Change in % Working from Home** 
+
+### Plot 1 - Change in % Working from Home 
 ```{r remote-work-bar, fig.width=8, fig.height=6}
 ggplot(acs_remote_change, aes(x = reorder(NAME, change), y = change)) +
   geom_col(fill = "steelblue") +
@@ -63,12 +79,80 @@ ggplot(acs_remote_change, aes(x = reorder(NAME, change), y = change)) +
        x = "State", y = "Change in % Working from Home") +
   theme_minimal()
 ```
-### **Interpretation**
+**Interpretation**
 
-The plot shows how much each state’s share of remote workers increased from 2019 to 2022. Washington, Maryland, Virginia, and D.C. saw the largest jumps, while many Southern and Midwestern states saw smaller increases. This highlights strong regional differences in remote-work adoption after COVID.
+The plot shows how much each state’s share of remote workers increased from 2019 to 2022. While many Southern and Midwestern states saw smaller increases, Washington, Maryland, Virginia, and District of Columbia saw the largest jumps. One curious fact about District of Columbia, Maryland, and Virginia is that many federal employees live in those states due to close proximity to the federal offices such as Capitol Hill or Pentagon. This may be an indicator that the U.S. Government was one of the largest adopters of the remote work during that period.
 
+### Plot 2 - Impact of Local stringency at the height of Covid (2020) 
 
-### **Plot 2 - Remote Work Share by State**
+Source: Oxford Covid-19 Government Response Tracker (OxCGRT) https://github.com/OxCGRT/covid-policy-tracker/tree/master
+
+```{r stringency-bar, fig.width=8, fig.height=6}
+
+library(dplyr)
+library(readr)
+library(ggplot2)
+library(stringr)
+
+# Load clean policy data
+policy <- read_csv(
+  "/Users/a348092/Documents/Mshamim_Docs/Continuing Education/EDAV/RemoteWorkPattern/policy_state_clean.csv",
+  show_col_types = FALSE
+)
+
+# States to highlight
+highlight_states <- c(
+  "District Of Columbia",
+  "Washington",
+  "Maryland",
+  "Massachusetts",
+  "Virginia"
+)
+
+# Prepare data
+policy_bar <- policy %>%
+  mutate(
+    state = str_to_title(region)   # Clean labels
+  ) %>%
+
+  arrange(stringency_2020)
+
+# Base plot
+ggplot(policy_bar, aes(x = reorder(state, stringency_2020),
+                       y = stringency_2020,
+                       fill = stringency_2020)) +
+  geom_col() +
+  coord_flip() +
+  scale_fill_gradient(low = "lightblue", high = "navy") +
+  
+  # Highlighted labels for the selected states
+  geom_text(
+    data = policy_bar %>% filter(state %in% highlight_states),
+    aes(label = state),
+    color = "black",
+    fontface = "bold",
+    hjust = -0.1,
+    size = 3
+  ) +
+  
+  labs(
+    title = "COVID-19 Stringency Index by State (2020)",
+    subtitle = "Bold labels highlight top remote-work growth states",
+    x = "State",
+    y = "Stringency Index (Oxford)"
+  ) +
+  
+  theme_minimal() +
+  theme(
+    axis.text.y = element_text(size = 8),
+    plot.title  = element_text(size = 16, face = "bold")
+  )
+```
+**Interpretation**
+
+The plot shows how strict each state’s COVID-19 policies were in 2020, with darker bars representing stronger restrictions. States like Mississippi, Arkansas, and Texas had among the highest average stringency, while Maryland, Virginia, and the Carolinas were among the lowest. The highlighted states—Washington, Massachusetts, Virginia, Maryland, and D.C.—experienced major remote-work growth, yet they vary widely in policy strictness, suggesting that strong remote-work adoption wasn’t driven solely by how strict a state’s COVID-19 measures were.
+
+### Plot 3 - Remote Work Share by State
 ```{r}
 library(dplyr)
 library(tidyr)
@@ -88,16 +172,11 @@ state_choropleth(df_remote,
                  legend = "% Working from Home")
 
 ```
-### **Interpretation**
+**Interpretation:**
 
-The map shows wide geographic variation in remote-work adoption in 2022. States on the West Coast, Mountain West, and Northeast have the highest work-from-home rates, while much of the South and Midwest show lower levels. One can infer that remote work remains concentrated in tech-professionals based in and urban regions.
+The map shows large geographic variation in remote-work adoption in 2022. States on the West Coast (WA, OR, CA), Mountain West (CO, UT), and the Northeast (MA, MD, VA, DC) have the highest work-from-home rates. Much of the South and Midwest remain lower. The pattern suggests remote work is most prevalent in regions with strong tech, professional services, and knowledge-economy labor markets.
 
-
-## **Employment by Industry and Traffic Volume**
-
-(Data Sources: Bureau of Labor Statistics & FHWA)
-
-### **Plot 1 - Employment Drop and Recovery During COVID-19**
+### Plot 4 - Employment Drop and Recovery During COVID-19
 ```{r}
 library(readr)
 library(dplyr)
@@ -106,7 +185,7 @@ library(ggplot2)
 
 # Step 1: Load CES data
 bls_raw <- read_tsv(
-  "/Users/a348092/Documents/Mshamim_Docs/Continuing Education/EDAV/Final Project/ce.data.0.AllCESSeries.txt",
+  "/Users/a348092/Documents/Mshamim_Docs/Continuing Education/EDAV/RemoteWorkPattern/ce.data.0.AllCESSeries.txt",
   col_names = c("series_id","year","period","value","footnote"),
   skip = 1
 )
@@ -170,11 +249,11 @@ ggplot(df_zoom, aes(date, value)) +
     strip.text = element_text(size = 11, face = "bold")
   )
 ```
-### **Interpretation**
+**Interpretation:**
 
 The plot shows how COVID-19 affected employment across major U.S. industries. Leisure & Hospitality experienced the steepest collapse, while Construction, Government, Financial Services, and IT saw milder declines. Most sectors recovered gradually after 2020, but the size and speed of recovery varied, revealing uneven pandemic impacts across the labor market.
 
-### **Plot 2 - Seasonal Heatmap of Monthly Vehicle Miles Traveled**
+### Plot 5 - Seasonal Heatmap of Monthly Vehicle Miles Traveled
 
 ```{r fhwa-traffic}
 library(tidyverse)
@@ -220,12 +299,12 @@ ggplot(vmt_heat, aes(x = Month, y = factor(Year), fill = value)) +
   )
 
 ```
-### **Interpretation**
+**Interpretation:**
 
 The heatmap shows strong seasonal patterns in U.S. vehicle travel, with higher volumes in summer and lower in winter. A dramatic collapse appears in April 2020 during COVID lockdowns, followed by gradual recovery. Recent years show a return to typical seasonal rhythms, though not always matching pre-pandemic peaks.
 
 
-## **Remote Work vs. Interstate Migration (2022, by State)**
+### Plot 6 - Remote Work vs. Interstate Migration (2022, by State)
 
 ```{r}
 library(tidyverse)
@@ -253,12 +332,11 @@ acs_remote_2022 <- get_acs(
 # -------------------------------
 # 2. Interstate migration by state (ACS 2022)
 # -------------------------------
-# B07001_010 = Lived in different state 1 year ago
 acs_interstate_2022 <- get_acs(
   geography = "state",
   variables = c(
-    total = "B07001_001",      # Total population
-    diff_state = "B07001_010"  # Moved from different state
+    total      = "B07001_001",
+    diff_state = "B07001_010"
   ),
   year = 2022,
   survey = "acs1"
@@ -277,22 +355,27 @@ migration_remote_interstate <- left_join(
 )
 
 # -------------------------------
-# 4. Scatter plot: Remote Work vs Interstate Migration
+# 4. Scatter plot (NO regression line)
 # -------------------------------
 ggplot(migration_remote_interstate,
        aes(x = remote_pct_2022, y = interstate_pct)) +
   geom_point(color = "steelblue", size = 3) +
-  geom_smooth(method = "lm", se = TRUE, color = "black") +
   labs(
     title = "Remote Work vs. Interstate Migration (2022, by State)",
     x = "% Working from Home",
     y = "% Moved from Different State (Past Year)"
   ) +
   theme_minimal()
+
 ```
 
-### **Interpretation**
 
-This plot shows a weak but positive relationship between remote work and interstate migration in 2022. States with higher percentages of people working from home tend to have slightly higher rates of people moving in from a different state, but the relationship is modest and scattered — meaning remote work is one factor among many, not a dominant driver of interstate moves.
+
+**Interpretation**:
+
+The scatterplot shows that states with higher remote-work rates do not necessarily experience higher levels of interstate migration. Most states cluster between 5–6% interstate movers regardless of remote-work prevalence, suggesting only a weak relationship. Outliers exist—such as a high remote-work state with typical migration levels—but overall, remote work does not appear to strongly drive cross-state relocation in 2022.
+
+
+
 
 
