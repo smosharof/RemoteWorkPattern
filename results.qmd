@@ -30,17 +30,8 @@ options(tidycensus.quiet = TRUE)
 ```
 
 
-We address three questions:
-
-1. How did remote-work vary by region and industry after COVID-19?
-2. How has commuting time, public transport usage, or road traffic changed?
-3. Are there links between remote-work adoption and residential migration?
-
 ---
 
-Remote Work  by Region and Industry
-
-(Data Source: U.S. Census Bureau, ACS 1-Year Estimates)
 
 ```{r remote-work-data}
 # Compare 2019 vs 2022 ACS data for "Worked from home"
